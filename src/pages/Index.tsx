@@ -1,13 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import React from 'react';
+import { PortfolioProvider, usePortfolio } from '@/contexts/PortfolioContext';
+import PublicLayout from '@/components/public/PublicLayout';
+import AdminLayout from '@/components/admin/AdminLayout';
+import LoginForm from '@/components/admin/LoginForm';
+
+const AppContent: React.FC = () => {
+  const { isAuthenticated } = usePortfolio();
+  const isAdminRoute = window.location.pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    return isAuthenticated ? <AdminLayout /> : <LoginForm />;
+  }
+
+  return <PublicLayout />;
+};
+
+const Index: React.FC = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <PortfolioProvider>
+      <AppContent />
+    </PortfolioProvider>
   );
 };
 
