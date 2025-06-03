@@ -3,6 +3,8 @@ import React from 'react';
 import Header from './Header';
 import HeroSection from './HeroSection';
 import ProjectsGrid from './ProjectsGrid';
+import AboutSection from './AboutSection';
+import ContactSection from './ContactSection';
 
 const PublicLayout: React.FC = () => {
   return (
@@ -10,6 +12,8 @@ const PublicLayout: React.FC = () => {
       <Header />
       <HeroSection />
       <ProjectsGrid />
+      <AboutSection />
+      <ContactSection />
       
       {/* Footer */}
       <footer className="bg-portfolio-dark text-white py-12">
