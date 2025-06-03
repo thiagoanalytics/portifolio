@@ -8,6 +8,10 @@ const HeroSection: React.FC = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToAbout = () => {
+    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="relative bg-white py-20 lg:py-32 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-portfolio-primary/5 via-transparent to-portfolio-accent/5"></div>
@@ -36,6 +40,7 @@ const HeroSection: React.FC = () => {
             <Button 
               variant="outline" 
               size="lg"
+              onClick={scrollToAbout}
               className="border-portfolio-primary text-portfolio-primary hover:bg-portfolio-primary hover:text-white px-8 py-3 text-lg"
             >
               Sobre Mim
