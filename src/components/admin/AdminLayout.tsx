@@ -10,13 +10,15 @@ import {
   LogOut, 
   Menu, 
   X,
-  ExternalLink
+  ExternalLink,
+  Settings
 } from 'lucide-react';
 import Dashboard from './Dashboard';
 import ProjectsManager from './ProjectsManager';
 import CategoriesManager from './CategoriesManager';
+import SiteSettingsManager from './SiteSettingsManager';
 
-type AdminPage = 'dashboard' | 'projects' | 'categories';
+type AdminPage = 'dashboard' | 'projects' | 'categories' | 'settings';
 
 const AdminLayout: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<AdminPage>('dashboard');
@@ -48,6 +50,11 @@ const AdminLayout: React.FC = () => {
       name: 'Categorias',
       icon: Tag,
     },
+    {
+      id: 'settings' as AdminPage,
+      name: 'Configurações',
+      icon: Settings,
+    },
   ];
 
   const renderCurrentPage = () => {
@@ -58,6 +65,8 @@ const AdminLayout: React.FC = () => {
         return <ProjectsManager />;
       case 'categories':
         return <CategoriesManager />;
+      case 'settings':
+        return <SiteSettingsManager />;
       default:
         return <Dashboard />;
     }
