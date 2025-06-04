@@ -8,13 +8,17 @@ import { PortfolioProvider, usePortfolio } from "@/contexts/PortfolioContext";
 import PublicLayout from "@/components/public/PublicLayout";
 import AdminLayout from "@/components/admin/AdminLayout";
 import LoginForm from "@/components/admin/LoginForm";
+import SecureRoute from "@/components/security/SecureRoute";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const AdminRoute: React.FC = () => {
-  const { isAuthenticated } = usePortfolio();
-  return isAuthenticated ? <AdminLayout /> : <LoginForm />;
+  return (
+    <SecureRoute fallback={<LoginForm />}>
+      <AdminLayout />
+    </SecureRoute>
+  );
 };
 
 const App = () => (

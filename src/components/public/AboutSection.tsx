@@ -1,55 +1,45 @@
 
 import React from 'react';
 import { usePortfolio } from '@/contexts/PortfolioContext';
+import { Badge } from '@/components/ui/badge';
+import SafeContent from '@/components/security/SafeContent';
 
 const AboutSection: React.FC = () => {
   const { siteSettings } = usePortfolio();
 
-  if (!siteSettings?.about) {
-    return null;
-  }
-
-  const { title, description, skills, experience_years } = siteSettings.about;
-
   return (
-    <section id="about" className="py-20 bg-gray-50">
+    <section id="about" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-portfolio-dark mb-4">
-            {title}
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-portfolio-dark mb-8">
+            <SafeContent content={siteSettings.about.title} as="span" />
           </h2>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <p className="text-lg text-portfolio-secondary leading-relaxed mb-6">
-              {description}
-            </p>
-            
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-portfolio-dark mb-3">
-                Experiência
-              </h3>
-              <p className="text-portfolio-secondary">
-                {experience_years} {experience_years === 1 ? 'ano' : 'anos'} de experiência
-              </p>
+          
+          <div className="text-lg text-portfolio-secondary leading-relaxed mb-8">
+            <SafeContent content={siteSettings.about.description} as="p" />
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-portfolio-dark mb-4">
+              Tecnologias
+            </h3>
+            <div className="flex flex-wrap justify-center gap-3">
+              {siteSettings.about.skills.map((skill, index) => (
+                <Badge 
+                  key={index}
+                  variant="secondary" 
+                  className="bg-portfolio-primary/10 text-portfolio-primary border-0 px-4 py-2"
+                >
+                  <SafeContent content={skill} as="span" />
+                </Badge>
+              ))}
             </div>
           </div>
           
-          <div>
-            <h3 className="text-xl font-semibold text-portfolio-dark mb-4">
-              Habilidades
-            </h3>
-            <div className="flex flex-wrap gap-3">
-              {skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="px-4 py-2 bg-portfolio-primary text-white rounded-full text-sm font-medium"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
+          <div className="text-portfolio-secondary">
+            <span className="font-semibold text-portfolio-primary">
+              {siteSettings.about.experience_years}+ anos
+            </span> de experiência em desenvolvimento
           </div>
         </div>
       </div>

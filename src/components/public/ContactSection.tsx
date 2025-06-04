@@ -1,99 +1,127 @@
 
 import React from 'react';
 import { usePortfolio } from '@/contexts/PortfolioContext';
-import { Mail, Phone, MapPin, Github, Linkedin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import SafeContent from '@/components/security/SafeContent';
 
 const ContactSection: React.FC = () => {
   const { siteSettings } = usePortfolio();
 
-  if (!siteSettings?.contact) {
-    return null;
-  }
-
-  const { email, phone, linkedin, github, address } = siteSettings.contact;
-
-  const contactItems = [
-    {
-      icon: Mail,
-      label: 'Email',
-      value: email,
-      link: `mailto:${email}`,
-      show: email
-    },
-    {
-      icon: Phone,
-      label: 'Telefone',
-      value: phone,
-      link: `tel:${phone}`,
-      show: phone
-    },
-    {
-      icon: MapPin,
-      label: 'Localização',
-      value: address,
-      link: null,
-      show: address
-    },
-    {
-      icon: Linkedin,
-      label: 'LinkedIn',
-      value: 'LinkedIn',
-      link: linkedin,
-      show: linkedin
-    },
-    {
-      icon: Github,
-      label: 'GitHub',
-      value: 'GitHub',
-      link: github,
-      show: github
+  // Validate external links before rendering
+  const isValidUrl = (url: string) => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      return false;
     }
-  ].filter(item => item.show);
+  };
+
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   return (
-    <section id="contact" className="py-20 bg-white">
+    <section id="contact" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-portfolio-dark mb-4">
-            Contato
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-portfolio-dark mb-8">
+            Entre em Contato
           </h2>
-          <p className="text-lg text-portfolio-secondary max-w-2xl mx-auto">
-            Estou sempre interessado em novos projetos e oportunidades. 
-            Entre em contato e vamos conversar!
+          <p className="text-lg text-portfolio-secondary mb-12">
+            Vamos conversar sobre seu próximo projeto
           </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          {contactItems.map((item, index) => {
-            const Icon = item.icon;
-            const content = (
-              <div className="flex items-center space-x-4 p-6 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex-shrink-0">
-                  <Icon className="h-6 w-6 text-portfolio-primary" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            {isValidEmail(siteSettings.contact.email) && (
+              <div className="flex items-center justify-center md:justify-start space-x-4">
+                <div className="bg-portfolio-primary/10 p-3 rounded-full">
+                  <Mail className="h-6 w-6 text-portfolio-primary" />
                 </div>
-                <div>
-                  <h3 className="font-medium text-portfolio-dark">{item.label}</h3>
-                  <p className="text-portfolio-secondary">{item.value}</p>
+                <div className="text-left">
+                  <h3 className="font-semibold text-portfolio-dark">Email</h3>
+                  <a 
+                    href={`mailto:${siteSettings.contact.email}`} 
+                    className="text-portfolio-secondary hover:text-portfolio-primary transition-colors"
+                  >
+                    {siteSettings.contact.email}
+                  </a>
                 </div>
               </div>
-            );
-
-            return item.link ? (
-              <a
-                key={index}
-                href={item.link}
-                target={item.link.startsWith('http') ? '_blank' : undefined}
-                rel={item.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="block hover:scale-105 transition-transform"
+            )}
+            
+            {siteSettings.contact.phone && (
+              <div className="flex items-center justify-center md:justify-start space-x-4">
+                <div className="bg-portfolio-primary/10 p-3 rounded-full">
+                  <Phone className="h-6 w-6 text-portfolio-primary" />
+                </div>
+                <div className="text-left">
+                  <h3 className="font-semibold text-portfolio-dark">Telefone</h3>
+                  <SafeContent 
+                    content={siteSettings.contact.phone} 
+                    className="text-portfolio-secondary"
+                    as="span"
+                  />
+                </div>
+              </div>
+            )}
+            
+            {siteSettings.contact.address && (
+              <div className="flex items-center justify-center md:justify-start space-x-4">
+                <div className="bg-portfolio-primary/10 p-3 rounded-full">
+                  <MapPin className="h-6 w-6 text-portfolio-primary" />
+                </div>
+                <div className="text-left">
+                  <h3 className="font-semibold text-portfolio-dark">Localização</h3>
+                  <SafeContent 
+                    content={siteSettings.contact.address} 
+                    className="text-portfolio-secondary"
+                    as="span"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex justify-center space-x-6">
+            {siteSettings.contact.linkedin && isValidUrl(siteSettings.contact.linkedin) && (
+              <Button
+                variant="outline"
+                asChild
+                className="border-portfolio-primary text-portfolio-primary hover:bg-portfolio-primary hover:text-white"
               >
-                {content}
-              </a>
-            ) : (
-              <div key={index}>
-                {content}
-              </div>
-            );
-          })}
+                <a
+                  href={siteSettings.contact.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2"
+                >
+                  <span>LinkedIn</span>
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            )}
+            
+            {siteSettings.contact.github && isValidUrl(siteSettings.contact.github) && (
+              <Button
+                variant="outline"
+                asChild
+                className="border-portfolio-primary text-portfolio-primary hover:bg-portfolio-primary hover:text-white"
+              >
+                <a
+                  href={siteSettings.contact.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2"
+                >
+                  <span>GitHub</span>
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </section>
