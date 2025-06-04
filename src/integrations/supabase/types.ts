@@ -9,7 +9,104 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string
+          external_link: string | null
+          id: string
+          image_url: string | null
+          name: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description: string
+          external_link?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string
+          external_link?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_settings: {
+        Row: {
+          about_description: string | null
+          about_skills: Json | null
+          about_title: string | null
+          contact_address: string | null
+          contact_email: string | null
+          contact_github: string | null
+          contact_linkedin: string | null
+          contact_phone: string | null
+          experience_years: number | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          about_description?: string | null
+          about_skills?: Json | null
+          about_title?: string | null
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_github?: string | null
+          contact_linkedin?: string | null
+          contact_phone?: string | null
+          experience_years?: number | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          about_description?: string | null
+          about_skills?: Json | null
+          about_title?: string | null
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_github?: string | null
+          contact_linkedin?: string | null
+          contact_phone?: string | null
+          experience_years?: number | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
