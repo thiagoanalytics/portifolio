@@ -52,7 +52,9 @@ export const useSiteSettings = () => {
         about: {
           title: data.about_title || '',
           description: data.about_description || '',
-          skills: Array.isArray(data.about_skills) ? data.about_skills : [],
+          skills: Array.isArray(data.about_skills) 
+            ? (data.about_skills as string[]) // Corrigido: conversão de tipo
+            : [],
           experience_years: data.experience_years || 0
         },
         contact: {
