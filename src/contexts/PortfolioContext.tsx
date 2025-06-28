@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { Project, Category, User, SiteSettings } from '@/types/portfolio';
 import { validateInput, sanitizeHTML, ValidationRules, SessionManager } from '@/utils/security';
 import { 
@@ -68,7 +68,7 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
   // Supabase hooks
   const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useCategories();
   const { data: projects = [], isLoading: projectsLoading, error: projectsError } = useProjects();
-  const { data: siteSettings, isLoading: settingsLoading, error: settingsError } = useSiteSettings();
+  const { data: siteSettings, isLoading: settingsLoading, error: settingsError, refetch: refetchSettings } = useSiteSettings();
   
   // Mutations
   const addProjectMutation = useAddProject();
@@ -93,6 +93,15 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
       email: 'seu@email.com'
     }
   };
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const session = SessionManager.getSession();
+    if (session) {
+      setIsAuthenticated(true);
+      setCurrentUser(mockUser);
+    }
+  }, []);
 
   const login = (username: string, password: string): boolean => {
     const usernameValidation = validateInput(username, { minLength: 3, maxLength: 50 });
@@ -160,9 +169,22 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
     deleteCategoryMutation.mutate(id);
   };
 
-  const updateSiteSettings = (settings: SiteSettings) => {
+  const updateSiteSettings = async (settings: SiteSettings) => {
     if (!isAuthenticated) return;
-    updateSiteSettingsMutation.mutate(settings);
+    
+    try {
+      console.log('Context: Updating site settings...', settings);
+      await updateSiteSettingsMutation.mutateAsync(settings);
+      console.log('Context: Site settings updated successfully');
+      
+      // Force refetch to ensure we have the latest data
+      setTimeout(() => {
+        refetchSettings();
+      }, 100);
+    } catch (error) {
+      console.error('Context: Error updating site settings:', error);
+      throw error;
+    }
   };
 
   const setSecureSearchTerm = (term: string) => {

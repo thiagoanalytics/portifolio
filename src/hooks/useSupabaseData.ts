@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Project, Category, SiteSettings, ProjectFormData, CategoryFormData } from '@/types/portfolio';
@@ -40,12 +39,18 @@ export const useSiteSettings = () => {
   return useQuery({
     queryKey: ['site_settings'],
     queryFn: async () => {
+      console.log('Fetching site settings from Supabase...');
       const { data, error } = await supabase
         .from('site_settings')
         .select('*')
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching site settings:', error);
+        throw error;
+      }
+      
+      console.log('Site settings fetched:', data);
       
       // Transform data to match SiteSettings interface
       const settings: SiteSettings = {
@@ -66,8 +71,11 @@ export const useSiteSettings = () => {
         }
       };
       
+      console.log('Transformed site settings:', settings);
       return settings;
     },
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always refetch to ensure fresh data
   });
 };
 
@@ -194,6 +202,8 @@ export const useUpdateSiteSettings = () => {
   
   return useMutation({
     mutationFn: async (settings: SiteSettings) => {
+      console.log('Updating site settings:', settings);
+      
       const updateData = {
         about_title: settings.about.title,
         about_description: settings.about.description,
@@ -207,17 +217,27 @@ export const useUpdateSiteSettings = () => {
         updated_at: new Date().toISOString()
       };
       
+      console.log('Update data being sent:', updateData);
+      
       const { data, error } = await supabase
         .from('site_settings')
         .update(updateData)
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating site settings:', error);
+        throw error;
+      }
+      
+      console.log('Site settings updated successfully:', data);
       return data;
     },
     onSuccess: () => {
+      console.log('Invalidating site_settings cache...');
+      // Invalidate and refetch immediately
       queryClient.invalidateQueries({ queryKey: ['site_settings'] });
+      queryClient.refetchQueries({ queryKey: ['site_settings'] });
     },
   });
 };

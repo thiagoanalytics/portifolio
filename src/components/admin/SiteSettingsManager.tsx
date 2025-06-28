@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -31,27 +31,63 @@ const SiteSettingsManager: React.FC = () => {
   });
   
   const [newSkill, setNewSkill] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSaveAbout = () => {
-    updateSiteSettings({
-      ...siteSettings,
-      about: aboutData
-    });
-    toast({
-      title: "Seção Sobre atualizada",
-      description: "As informações foram salvas com sucesso.",
-    });
+  // Update local state when siteSettings change
+  useEffect(() => {
+    console.log('SiteSettingsManager: siteSettings updated', siteSettings);
+    if (siteSettings) {
+      setAboutData(siteSettings.about);
+      setContactData(siteSettings.contact);
+    }
+  }, [siteSettings]);
+
+  const handleSaveAbout = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Saving about data:', aboutData);
+      await updateSiteSettings({
+        ...siteSettings,
+        about: aboutData
+      });
+      toast({
+        title: "Seção Sobre atualizada",
+        description: "As informações foram salvas com sucesso.",
+      });
+    } catch (error) {
+      console.error('Error saving about data:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Ocorreu um erro ao salvar as informações.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSaveContact = () => {
-    updateSiteSettings({
-      ...siteSettings,
-      contact: contactData
-    });
-    toast({
-      title: "Seção Contato atualizada", 
-      description: "As informações foram salvas com sucesso.",
-    });
+  const handleSaveContact = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Saving contact data:', contactData);
+      await updateSiteSettings({
+        ...siteSettings,
+        contact: contactData
+      });
+      toast({
+        title: "Seção Contato atualizada", 
+        description: "As informações foram salvas com sucesso.",
+      });
+    } catch (error) {
+      console.error('Error saving contact data:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Ocorreu um erro ao salvar as informações.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const addSkill = () => {
@@ -160,9 +196,9 @@ const SiteSettingsManager: React.FC = () => {
                 </div>
               </div>
 
-              <Button onClick={handleSaveAbout} className="w-full">
+              <Button onClick={handleSaveAbout} className="w-full" disabled={isLoading}>
                 <Save className="h-4 w-4 mr-2" />
-                Salvar Seção Sobre
+                {isLoading ? 'Salvando...' : 'Salvar Seção Sobre'}
               </Button>
             </CardContent>
           </Card>
@@ -229,9 +265,9 @@ const SiteSettingsManager: React.FC = () => {
                 />
               </div>
 
-              <Button onClick={handleSaveContact} className="w-full">
+              <Button onClick={handleSaveContact} className="w-full" disabled={isLoading}>
                 <Save className="h-4 w-4 mr-2" />
-                Salvar Seção Contato
+                {isLoading ? 'Salvando...' : 'Salvar Seção Contato'}
               </Button>
             </CardContent>
           </Card>
