@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import type { Project, Category, User, SiteSettings } from '@/types/portfolio';
 import { validateInput, sanitizeHTML, ValidationRules, SessionManager } from '@/utils/security';
@@ -108,7 +109,7 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
     if (cleanUsername === 'admin' && cleanPassword === 'admin123') {
       setIsAuthenticated(true);
       setCurrentUser(mockUser);
-      SessionManager.setSecureSession('admin', 3600000); // Corrigido: usar setSecureSession
+      SessionManager.setSecureSession('admin', 3600000);
       return true;
     }
     return false;
