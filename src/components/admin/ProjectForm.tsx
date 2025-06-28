@@ -47,13 +47,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSave, onCancel }) 
 
     try {
       if (project) {
-        updateProject(project.id, formData);
+        await updateProject(project.id, formData);
         toast({
           title: "Projeto atualizado!",
           description: "As alterações foram salvas com sucesso.",
         });
       } else {
-        addProject(formData);
+        await addProject(formData);
         toast({
           title: "Projeto criado!",
           description: "O novo projeto foi adicionado ao portfólio.",
@@ -61,9 +61,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSave, onCancel }) 
       }
       onSave();
     } catch (error) {
+      console.error('Erro ao salvar projeto:', error);
       toast({
         title: "Erro ao salvar",
-        description: "Ocorreu um erro ao salvar o projeto.",
+        description: "Ocorreu um erro ao salvar o projeto. Tente novamente.",
         variant: "destructive",
       });
     } finally {

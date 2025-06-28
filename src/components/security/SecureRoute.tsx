@@ -10,8 +10,22 @@ interface SecureRouteProps {
 }
 
 const SecureRoute: React.FC<SecureRouteProps> = ({ children, fallback }) => {
-  const { isAuthenticated, logout } = usePortfolio();
   const { toast } = useToast();
+
+  // Verificar se temos um contexto válido
+  let isAuthenticated = false;
+  let logout = () => {};
+
+  try {
+    const context = usePortfolio();
+    isAuthenticated = context.isAuthenticated;
+    logout = context.logout;
+  } catch (error) {
+    console.log('PortfolioContext not available, using fallback auth check');
+    // Fallback: verificar sessão diretamente
+    const session = SessionManager.getSession();
+    isAuthenticated = !!session;
+  }
 
   useEffect(() => {
     // Check session validity on mount and every minute
